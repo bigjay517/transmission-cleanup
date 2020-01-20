@@ -52,12 +52,12 @@ def main():
 
     try:
         commandResult = subprocess.check_output(["transmission-remote",remoteAddr,"--auth", authUser, "-l"])
-    except CalledProcessError:
+    except subprocess.CalledProcessError:
         dateAndTime = time.strftime("%H:%M:%S") + " " + time.strftime("%d/%m/%Y")
         print(dateAndTime + " ERROR: something went wrong checking the torrents listing.") 
         return -1
         
-    splitResult = commandResult.split("\n")
+    splitResult = commandResult.decode().split("\n")
 
     # Remove items which are just empty strings
     while True:
@@ -91,7 +91,7 @@ def main():
     try:
         for item in completedTorrents:
             commandResult = subprocess.check_output(["transmission-remote",remoteAddr,"--auth",authUser, "-t", item[0], "--info"])
-            splitResult = commandResult.split("\n")
+            splitResult = commandResult.decode().split("\n")
             for line in splitResult:
                 if "Latest activity:" in line:
                     newLine = line.split(":  ")
@@ -108,9 +108,9 @@ def main():
                     #print(timeDelta)
                     #print(today)
                     #print(date_time_obj.date())
-    except CalledProcessError:
+    except subprocess.CalledProcessError:
         dateAndTime = time.strftime("%H:%M:%S") + " " + time.strftime("%d/%m/%Y")
-        print(dateAndTime + " ERROR: something went wrong with 'check_output'. " + commandResult)
+        print(dateAndTime + " ERROR: something went wrong with 'check_output'. " + commandResult.decode())
         return -1
 
     for item in idleTorrents:
